@@ -1,0 +1,10 @@
+// clangd nonsense
+.cache
+compile_commands.json
+
+// executable
+hashtable
+
+// stinky object files
+**/*.o
+
