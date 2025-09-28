@@ -3,6 +3,7 @@
 
 # include <stddef.h>
 # include <stdio.h>
+# include <stdbool.h>
 
 	typedef struct {
 		size_t load;
@@ -19,6 +20,21 @@
 	HashTable* hashtable_create();
 	HashTable* hashtable_create_ex(size_t starting_size, double max_load_factor);
 
+	// ------------------
+	// |     RESIZE     |
+	// ------------------
+	HashTable* hashtable_resize(HashTable* hashtable, size_t new_size);
+
+	// ------------------
+	// |      ERASE     |
+	// ------------------
+	void hashtable_erase(HashTable* hashtable);
+
+	// ----------------
+	// |     FREE     |
+	// ----------------
+	void hashtable_free(HashTable* hashtable);
+	void hashtable_free_ex(HashTable* hashtable, bool free_data);
 
 	// ------------------
 	// |     INSERT     |

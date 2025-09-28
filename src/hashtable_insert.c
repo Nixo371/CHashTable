@@ -6,9 +6,9 @@
 // TODO should I make this a "private" function and require a size?
 // The value should be allocated previously, the key will be copied for ease of use with raw strings (hashtable_insert_int(hashtable, "example", 20))
 int hashtable_insert(HashTable* hashtable, char* key, void* value) {
-	printf("Inserting into hashtable with key '%s'\n", key);
+	// printf("Inserting into hashtable with key '%s'\n", key);
 	size_t hash = hashtable_hash(key) % hashtable->size;
-	printf("Hash: %lu\n", hash);
+	// printf("Hash: %lu\n", hash);
 
 	// Handle conflicts with linear (keep going down the list until find the key or an open spot)
 	while (hashtable->keys[hash] != NULL) {
@@ -32,7 +32,7 @@ int hashtable_insert(HashTable* hashtable, char* key, void* value) {
 	hashtable->load++;
 	double load_factor = (double)hashtable->load / hashtable->size;
 	if (load_factor > hashtable->max_load_factor) {
-		// TODO Resize
+		hashtable = hashtable_resize(hashtable, hashtable->size * 2);
 	}
 
 	return (0);
