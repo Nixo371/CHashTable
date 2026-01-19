@@ -24,7 +24,7 @@ int hashtable_insert(HashTable* hashtable, char* key, void* value) {
 	}
 	size_t key_len = strlen(key);
 	hashtable->keys[hash] = malloc((key_len + 1) * sizeof(char *));
-	hashtable->values[hash] = malloc(1 * sizeof(void *));
+	// hashtable->values[hash] = malloc(1 * sizeof(void *));
 
 	strncpy(hashtable->keys[hash], key, key_len + 1);
 	hashtable->values[hash] = value;
@@ -32,7 +32,7 @@ int hashtable_insert(HashTable* hashtable, char* key, void* value) {
 	hashtable->load++;
 	double load_factor = (double)hashtable->load / hashtable->size;
 	if (load_factor > hashtable->max_load_factor) {
-		hashtable = hashtable_resize(hashtable, hashtable->size * 2);
+		hashtable_resize(hashtable, hashtable->size * 2);
 	}
 
 	return (0);

@@ -23,18 +23,18 @@
 	// ------------------
 	// |     RESIZE     |
 	// ------------------
-	HashTable* hashtable_resize(HashTable* hashtable, size_t new_size);
+	void hashtable_resize(HashTable* hashtable, size_t new_size);
 
 	// ------------------
 	// |      ERASE     |
 	// ------------------
-	void hashtable_erase(HashTable* hashtable);
+	void hashtable_erase(HashTable* hashtable, bool free_keys, bool free_values);
 
 	// ----------------
 	// |     FREE     |
 	// ----------------
 	void hashtable_free(HashTable* hashtable);
-	void hashtable_free_ex(HashTable* hashtable, bool free_data);
+	void hashtable_free_ex(HashTable* hashtable, bool free_keys, bool free_values);
 
 	// ------------------
 	// |     INSERT     |
@@ -73,4 +73,9 @@
 	// ------------------
 	size_t hashtable_hash(char* value);
 	size_t hashtable_hash_ex(char* value, size_t count);
+
+	// ------------------
+	// |      MISC      |
+	// ------------------
+	void hashtable_print_ints(HashTable* hashtable);
 #endif
