@@ -1,53 +1,265 @@
 #include "../include/hashtable.h"
-#include <stdio.h>
 
 #include <criterion/criterion.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#define TEST_VALUES 100
+#define RAND_SEED 420
 
 Test(value_integrity, ints) {
-	HashTable* table = hashtable_create_ex(101, 1); // Shouldn't automatically resize itself
-	cr_assert(table != NULL, "Expected table to be created properly");
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
 
 	// Insert 100 random numbers
-	char *numbers[] = { "1847392041", "-923847562", "1456783920", "-1829374651", "745892031", "-456182937", "2091847563", "-1673849201", "892047315", "-1284930567", "1537829461", "-2047391856", "364819275", "-1891047362", "1928374056", "-738291465", "1647382910", "-1092847356", "582910473", "-1456738291", "2019384756", "-867492013", "1238475690", "-1928475036", "473829156", "-1547382910", "1829374056", "-638291047", "1947382056", "-1738294056", "291847356", "-1392847501", "1647829305", "-928374615", "1829475603", "-1456829037", "738291456", "-1928374605", "2038475619", "-547382910", "1384756920", "-1847392056", "928374156", "-1637482950", "1547829306", "-829374516", "1928476053", "-1473829156", "647382915", "-1928374650", "2047385169", "-738294156", "1456738290", "-1829475036", "847392016", "-1547839201", "1738294056", "-928475163", "1928374650", "-1384756029", "547382910", "-1928374056", "2091847536", "-647382915", "1384756902", "-1738294650", "928374605", "-1456738209", "1647382905", "-847392016", "1928475036", "-1547382906", "738294156", "-1928374605", "2019384756", "-547839201", "1456738920", "-1829374056", "928475136", "-1647382905", "1738294056", "-829374651", "1928374605", "-1384756920", "647382910", "-1928475036", "2038475619", "-738291456", "1456829037", "-1738294056", "847392105", "-1456738290", "1647839201", "-928374156", "1928475063", "-1547382910", "738294651", "-1928374650", "666666666", "0" };
-	int numbers_count = sizeof(numbers) / sizeof(numbers[0]);
-
-	for (int i = 0; i < numbers_count; i++) {
-		hashtable_insert_int(table, numbers[i], atoi(numbers[i]));
+	int numbers[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		numbers[i] = rand();
+		int negative = rand() % 2 ? -1 : 1; // If even, number is negative
+		numbers[i] *= negative;
 	}
 
-	// TODO Test that they're actually there
+	char key[12]; // Worst case -1 000 000 000
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%d", numbers[i]);
+		hashtable_insert_int(table, key, numbers[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%d", numbers[i]);
+		int value = hashtable_get_int(table, key);
+		cr_assert(value == numbers[i], "Ints don't match! (%d, %d)", value, numbers[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, uints) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random numbers
+	unsigned int numbers[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		numbers[i] = rand();
+	}
+
+	char key[12]; // Worst case -1 000 000 000
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%u", numbers[i]);
+		hashtable_insert_uint(table, key, numbers[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%u", numbers[i]);
+		unsigned int value = hashtable_get_uint(table, key);
+		cr_assert(value == numbers[i], "Uints don't match! (%u, %u)", value, numbers[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, longs) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random numbers
+	long numbers[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		numbers[i] = rand();
+		int negative = rand() % 2 ? -1 : 1; // If even, number is negative
+		numbers[i] *= negative;
+	}
+
+	char key[12]; // Worst case -1 000 000 000
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%ld", numbers[i]);
+		hashtable_insert_long(table, key, numbers[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%ld", numbers[i]);
+		long value = hashtable_get_long(table, key);
+		cr_assert(value == numbers[i], "Longs don't match! (%ld, %ld)", value, numbers[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, ulongs) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random numbers
+	unsigned long numbers[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		numbers[i] = rand();
+	}
+
+	char key[12]; // Worst case -1 000 000 000
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%lu", numbers[i]);
+		hashtable_insert_ulong(table, key, numbers[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%lu", numbers[i]);
+		unsigned long value = hashtable_get_ulong(table, key);
+		cr_assert(value == numbers[i], "Ulongs don't match! (%lu, %lu)", value, numbers[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, floats) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random numbers
+	float numbers[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		numbers[i] = (float)rand(); // integer part
+		numbers[i] = (float)rand() / (float)(RAND_MAX); // decimal part
+		int negative = rand() % 2 ? -1 : 1; // If even, number is negative
+		numbers[i] *= negative;
+	}
+
+	char key[100]; // I literally have no idea what worst case scenario is so...
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%.5f", numbers[i]); // 5 decimal points of precision
+		hashtable_insert_float(table, key, numbers[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%.5f", numbers[i]);
+		float value = hashtable_get_float(table, key);
+		cr_assert(value == numbers[i], "Floats don't match! (%.5f, %.5f)", value, numbers[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, doubles) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random numbers
+	double numbers[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		numbers[i] = (double)rand(); // integer part
+		numbers[i] = (double)rand() / (double)(RAND_MAX); // decimal part
+		int negative = rand() % 2 ? -1 : 1; // If even, number is negative
+		numbers[i] *= negative;
+	}
+
+	char key[100]; // I literally have no idea what worst case scenario is so...
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%.5lf", numbers[i]); // 5 decimal points of precision
+		hashtable_insert_double(table, key, numbers[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%.5lf", numbers[i]);
+		double value = hashtable_get_double(table, key);
+		cr_assert(value == numbers[i], "Doubles don't match! (%.5lf, %.5lf)", value, numbers[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, chars) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random chars
+	char characters[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		characters[i] = (rand() % 95) + 32; // 32 (space) - 126 (~) // printable chars
+	}
+
+	char key[100]; // I literally have no idea what worst case scenario is so...
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%d%c", i, characters[i]); // Use the index to avoid collisions
+		hashtable_insert_char(table, key, characters[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		sprintf(key, "%d%c", i, characters[i]);
+		char value = hashtable_get_char(table, key);
+		cr_assert(value == characters[i], "characters don't match! (%c, %c)", value, characters[i]);
+	}
+
+	hashtable_free(table);
+}
+
+Test(value_integrity, strings) {
+	srand(RAND_SEED);
+	HashTable* table = hashtable_create();
+	cr_assert(table != NULL, "Table creation failed");
+
+	// Insert 100 random strings
+	char* strings[TEST_VALUES];
+	for (int i = 0; i < TEST_VALUES; i++) {
+		int len = rand() % 100;
+		strings[i] = (char *) malloc((len + 1) * sizeof(char));
+		for (int j = 0; j < len; j++) {
+			strings[i][j] = (rand() % 95) + 32; // 32 (space) - 126 (~) // printable chars
+		}
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		hashtable_insert_str(table, strings[i], strings[i]);
+	}
+
+	for (int i = 0; i < TEST_VALUES; i++) {
+		char* value = hashtable_get_str(table, strings[i]);
+		cr_assert(strncmp(value, strings[i], strlen(value)) == 0, "strings don't match! (%s, %s)", value, strings[i]);
+	}
 
 	hashtable_free(table);
 }
 
 Test(table_integrity, resize) {
 	HashTable* table = hashtable_create_ex(8, 0.5);
-	cr_assert(table != NULL, "Expected table to be created properly");
+	cr_assert(table != NULL, "Table creation failed");
 
 
 	hashtable_resize(table, 16);
-	cr_assert(table->size == 16, "Expected new table size to be 16");
-	cr_assert(table->load == 0, "Expected new table size to be 0");
+	cr_assert(table->size == 16, "Expected new table size to be 16 (%lu)", table->size);
+	cr_assert(table->load == 0, "Expected new table load to be 0 (%lu)", table->load);
 
 	// Insert 8 values (right before forcing a resize)
 	char s[2];
 	s[1] = '\0';
 	for (int i = 0; i < 8; i++) {
-		s[0] = 'a' + i;
+		s[0] = '0' + i;
 		hashtable_insert_int(table, s, i);
 	}
 
-	hashtable_print_ints(table);
-
-	cr_assert(table->load == 8, "Expected table to have 8 values loaded");
+	cr_assert(table->load == 8, "Expected table to have 8 values (%lu)", table->load);
 
 	hashtable_insert_int(table, "overflow", 69);
 
-	hashtable_print_ints(table);
-
 	cr_assert(table->load == 9, "Expected table to insert properly");
-	cr_assert(table->size == 32, "Expected table to have been resized properly");
+	cr_assert(table->size == 32, "Table was not properly resized to 32 (%lu)", table->size);
 
 	// Check that values are still there
+	for (int i = 0; i < 8; i++) {
+		s[0] = '0' + i;
+		int value = hashtable_get_int(table, s);
+		cr_assert(value == atoi(s), "Numbers don't match! (%d, %d)", value, atoi(s));
+	}
+	int final = hashtable_get_int(table, "overflow");
+	cr_assert(69 == final, "Final value inserted doesn't match (69, %d)", final);
+
+	hashtable_free(table);
 }
